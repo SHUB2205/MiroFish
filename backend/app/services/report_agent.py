@@ -473,157 +473,158 @@ class Report:
 # ── 工具描述 ──
 
 TOOL_DESC_INSIGHT_FORGE = """\
-【深度洞察检索 - 强大的检索工具】
-这是我们强大的检索函数，专为深度分析设计。它会：
-1. 自动将你的问题分解为多个子问题
-2. 从多个维度检索模拟图谱中的信息
-3. 整合语义搜索、实体分析、关系链追踪的结果
-4. 返回最全面、最深度的检索内容
+[Deep Insight Retrieval - Powerful Retrieval Tool]
+This is our powerful retrieval function designed for deep analysis. It will:
+1. Automatically decompose your question into multiple sub-questions
+2. Retrieve information from the simulation graph across multiple dimensions
+3. Integrate results from semantic search, entity analysis, and relationship chain tracking
+4. Return the most comprehensive and in-depth retrieval content
 
-【使用场景】
-- 需要深入分析某个话题
-- 需要了解事件的多个方面
-- 需要获取支撑报告章节的丰富素材
+[Use Cases]
+- Need to deeply analyze a topic
+- Need to understand multiple aspects of an event
+- Need to obtain rich material to support report sections
 
-【返回内容】
-- 相关事实原文（可直接引用）
-- 核心实体洞察
-- 关系链分析"""
+[Returns]
+- Related factual content (can be directly quoted)
+- Core entity insights
+- Relationship chain analysis"""
 
 TOOL_DESC_PANORAMA_SEARCH = """\
-【广度搜索 - 获取全貌视图】
-这个工具用于获取模拟结果的完整全貌，特别适合了解事件演变过程。它会：
-1. 获取所有相关节点和关系
-2. 区分当前有效的事实和历史/过期的事实
-3. 帮助你了解舆情是如何演变的
+[Breadth Search - Get Full Picture View]
+This tool is used to get the complete picture of simulation results, especially suitable for understanding event evolution. It will:
+1. Get all related nodes and relationships
+2. Distinguish between currently valid facts and historical/expired facts
+3. Help you understand how public opinion evolved
 
-【使用场景】
-- 需要了解事件的完整发展脉络
-- 需要对比不同阶段的舆情变化
-- 需要获取全面的实体和关系信息
+[Use Cases]
+- Need to understand the complete development trajectory of an event
+- Need to compare opinion changes across different stages
+- Need to obtain comprehensive entity and relationship information
 
-【返回内容】
-- 当前有效事实（模拟最新结果）
-- 历史/过期事实（演变记录）
-- 所有涉及的实体"""
+[Returns]
+- Currently valid facts (latest simulation results)
+- Historical/expired facts (evolution records)
+- All involved entities"""
 
 TOOL_DESC_QUICK_SEARCH = """\
-【简单搜索 - 快速检索】
-轻量级的快速检索工具，适合简单、直接的信息查询。
+[Simple Search - Quick Retrieval]
+Lightweight quick retrieval tool, suitable for simple, direct information queries.
 
-【使用场景】
-- 需要快速查找某个具体信息
-- 需要验证某个事实
-- 简单的信息检索
+[Use Cases]
+- Need to quickly find specific information
+- Need to verify a fact
+- Simple information retrieval
 
-【返回内容】
-- 与查询最相关的事实列表"""
+[Returns]
+- List of facts most relevant to the query"""
 
 TOOL_DESC_INTERVIEW_AGENTS = """\
-【深度采访 - 真实Agent采访（双平台）】
-调用OASIS模拟环境的采访API，对正在运行的模拟Agent进行真实采访！
-这不是LLM模拟，而是调用真实的采访接口获取模拟Agent的原始回答。
-默认在Twitter和Reddit两个平台同时采访，获取更全面的观点。
+[Deep Interview - Real Agent Interview (Dual Platform)]
+Call the OASIS simulation environment's interview API to conduct real interviews with running simulation Agents!
+This is not LLM simulation, but calling the real interview interface to get original answers from simulation Agents.
+By default, interviews are conducted on both Twitter and Reddit platforms simultaneously for more comprehensive perspectives.
 
-功能流程：
-1. 自动读取人设文件，了解所有模拟Agent
-2. 智能选择与采访主题最相关的Agent（如学生、媒体、官方等）
-3. 自动生成采访问题
-4. 调用 /api/simulation/interview/batch 接口在双平台进行真实采访
-5. 整合所有采访结果，提供多视角分析
+Workflow:
+1. Automatically read persona files to understand all simulation Agents
+2. Intelligently select Agents most relevant to the interview topic (e.g., students, media, officials)
+3. Automatically generate interview questions
+4. Call /api/simulation/interview/batch interface for real interviews on both platforms
+5. Integrate all interview results and provide multi-perspective analysis
 
-【使用场景】
-- 需要从不同角色视角了解事件看法（学生怎么看？媒体怎么看？官方怎么说？）
-- 需要收集多方意见和立场
-- 需要获取模拟Agent的真实回答（来自OASIS模拟环境）
-- 想让报告更生动，包含"采访实录"
+[Use Cases]
+- Need to understand event perspectives from different roles (What do students think? What does media say? What's the official stance?)
+- Need to collect opinions and positions from multiple parties
+- Need to get real answers from simulation Agents (from OASIS simulation environment)
+- Want to make the report more vivid with "interview transcripts"
 
-【返回内容】
-- 被采访Agent的身份信息
-- 各Agent在Twitter和Reddit两个平台的采访回答
-- 关键引言（可直接引用）
-- 采访摘要和观点对比
+[Returns]
+- Identity information of interviewed Agents
+- Interview responses from each Agent on both Twitter and Reddit platforms
+- Key quotes (can be directly cited)
+- Interview summary and viewpoint comparison
 
-【重要】需要OASIS模拟环境正在运行才能使用此功能！"""
+[Important] OASIS simulation environment must be running to use this feature!"""
 
 # ── 大纲规划 prompt ──
 
 PLAN_SYSTEM_PROMPT = """\
-你是一个「未来预测报告」的撰写专家，拥有对模拟世界的「上帝视角」——你可以洞察模拟中每一位Agent的行为、言论和互动。
+You are an expert in writing "Future Prediction Reports" with a "God's eye view" of the simulation world - you can observe the behavior, statements, and interactions of every Agent in the simulation.
 
-【核心理念】
-我们构建了一个模拟世界，并向其中注入了特定的「模拟需求」作为变量。模拟世界的演化结果，就是对未来可能发生情况的预测。你正在观察的不是"实验数据"，而是"未来的预演"。
+[Core Concept]
+We have built a simulation world and injected specific "simulation requirements" as variables. The evolution results of the simulation world are predictions of what might happen in the future. What you are observing is not "experimental data" but a "preview of the future."
 
-【你的任务】
-撰写一份「未来预测报告」，回答：
-1. 在我们设定的条件下，未来发生了什么？
-2. 各类Agent（人群）是如何反应和行动？
-3. 这个模拟揭示了哪些值得关注的未来趋势和风险？
+[Your Task]
+Write a "Future Prediction Report" that answers:
+1. Under the conditions we set, what happened in the future?
+2. How did various Agents (groups) react and act?
+3. What future trends and risks does this simulation reveal that are worth attention?
 
-【报告定位】
-- ✅ 这是一份基于模拟的未来预测报告，揭示"如果这样，未来会怎样"
-- ✅ 聚焦于预测结果：事件走向、群体反应、涌现现象、潜在风险
-- ✅ 模拟世界中的Agent言行就是对未来人群行为的预测
-- ❌ 不是对现实世界现状的分析
-- ❌ 不是泛泛而谈的舆情综述
+[Report Positioning]
+- This is a simulation-based future prediction report, revealing "if this happens, what will the future be like"
+- Focus on prediction results: event trajectory, group reactions, emergent phenomena, potential risks
+- Agent behaviors in the simulation world are predictions of future human behavior
+- Not an analysis of the current state of the real world
+- Not a generic public opinion summary
 
-【章节数量限制】
-- 最少2个章节，最多5个章节
-- 不需要子章节，每个章节直接撰写完整内容
-- 内容要精炼，聚焦于核心预测发现
-- 章节结构由你根据预测结果自主设计
+[Section Quantity Limit]
+- Minimum 2 sections, maximum 5 sections
+- No subsections needed, each section should contain complete content
+- Content should be concise, focusing on core prediction findings
+- Section structure should be designed by you based on prediction results
 
-请输出JSON格式的报告大纲，格式如下：
+Please output the report outline in JSON format as follows:
 {
-    "title": "报告标题",
-    "summary": "报告摘要（一句话概括核心预测发现）",
+    "title": "Report Title",
+    "summary": "Report Summary (one sentence summarizing core prediction findings)",
     "sections": [
         {
-            "title": "章节标题",
-            "description": "章节内容描述"
+            "title": "Section Title",
+            "description": "Section content description"
         }
     ]
 }
 
-注意：sections数组最少2个，最多5个元素！"""
+Note: The sections array must have at least 2 and at most 5 elements!"""
 
 PLAN_USER_PROMPT_TEMPLATE = """\
-【预测场景设定】
-我们向模拟世界注入的变量（模拟需求）：{simulation_requirement}
+[Prediction Scenario Setup]
+Variables injected into the simulation world (simulation requirements): {simulation_requirement}
 
-【模拟世界规模】
-- 参与模拟的实体数量: {total_nodes}
-- 实体间产生的关系数量: {total_edges}
-- 实体类型分布: {entity_types}
-- 活跃Agent数量: {total_entities}
+[Simulation World Scale]
+- Number of entities participating in simulation: {total_nodes}
+- Number of relationships generated between entities: {total_edges}
+- Entity type distribution: {entity_types}
+- Number of active Agents: {total_entities}
 
-【模拟预测到的部分未来事实样本】
+[Sample of Future Facts Predicted by Simulation]
 {related_facts_json}
 
-请以「上帝视角」审视这个未来预演：
-1. 在我们设定的条件下，未来呈现出了什么样的状态？
-2. 各类人群（Agent）是如何反应和行动的？
-3. 这个模拟揭示了哪些值得关注的未来趋势？
+Please examine this future preview from a "God's eye view":
+1. Under the conditions we set, what state does the future present?
+2. How did various groups (Agents) react and act?
+3. What future trends worth attention does this simulation reveal?
 
-根据预测结果，设计最合适的报告章节结构。
+Based on the prediction results, design the most appropriate report section structure.
 
-【再次提醒】报告章节数量：最少2个，最多5个，内容要精炼聚焦于核心预测发现。"""
+[Reminder] Report section count: minimum 2, maximum 5, content should be concise and focused on core prediction findings."""
 
 # ── 章节生成 prompt ──
 
 SECTION_SYSTEM_PROMPT_TEMPLATE = """\
-你是一个「未来预测报告」的撰写专家，正在撰写报告的一个章节。
+You are an expert in writing "Future Prediction Reports" and are currently writing a section of the report.
 
-报告标题: {report_title}
-报告摘要: {report_summary}
-预测场景（模拟需求）: {simulation_requirement}
+Report Title: {report_title}
+Report Summary: {report_summary}
+Prediction Scenario (Simulation Requirements): {simulation_requirement}
 
-当前要撰写的章节: {section_title}
+Current Section to Write: {section_title}
 
 ═══════════════════════════════════════════════════════════════
-【核心理念】
+【Core Concept】
 ═══════════════════════════════════════════════════════════════
 
+The simulation world is a preview of the future. We have injected specific conditions (simulation requirements) into the simulation world. The evolution results of the simulation world are predictions of what might happen in the future. What you are observing is not "experimental data" but a "preview of the future."
 模拟世界是对未来的预演。我们向模拟世界注入了特定条件（模拟需求），
 模拟中Agent的行为和互动，就是对未来人群行为的预测。
 
