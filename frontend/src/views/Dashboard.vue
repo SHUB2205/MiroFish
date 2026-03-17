@@ -384,6 +384,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { listProjects } from '../api/graph'
 
 const router = useRouter()
 
@@ -519,7 +520,65 @@ const handleLogout = () => {
   router.push('/')
 }
 
-onMounted(() => {
+const loadProjects = async () => {
+  try {
+    const res = await listProjects()
+    if (res.success && res.data) {
+      const projects = res.data
+      
+      // Calculate stats from real data
+      stats.value = {
+        totalSimulations: projects.length,
+        totalReports: projects.filter(p => p.status === 'graph_completed').length,
+        totalAgents: projects.reduce((sum, p) => sum + (p.agent_count || 0), 0),
+        avgTime: projects.length > 0 ? 8 : 0
+      }
+      
+      // Update usage count
+      usageCount.value = projects.length
+      
+      // Map projects to simulations format
+      simulations.value = projects.map(p => ({
+        id: p.project_id,
+        name: p.project_name || `Project ${p.project_id.slice(0, 8)}`,
+        requirement: p.simulation_requirement || 'No requirement specified',
+        agents: p.agent_count || 0,
+        status: p.status === 'graph_completed' ? 'completed' : p.status === 'failed' ? 'failed' : 'running',
+        createdAt: new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        reportId: p.report_id || null
+      }))
+      
+      // Generate recent activity from projects
+      recentActivity.value = projects.slice(0, 5).map((p, idx) => ({
+        id: idx + 1,
+        type: p.status === 'graph_completed' ? 'report' : 'simulation',
+        icon: p.status === 'graph_completed' ? '�' : '�🔮',
+        title: `${p.status === 'graph_completed' ? 'Completed' : 'Started'}: ${p.project_name || p.project_id.slice(0, 8)}`,
+        time: formatTimeAgo(p.created_at),
+        actionLabel: 'View'
+      }))
+    }
+  } catch (err) {
+    console.error('Failed to load projects:', err)
+  }
+}
+
+const formatTimeAgo = (dateStr) => {
+  if (!dateStr) return 'Unknown'
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+  
+  if (diffMins < 60) return `${diffMins} minutes ago`
+  if (diffHours < 24) return `${diffHours} hours ago`
+  if (diffDays < 7) return `${diffDays} days ago`
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+onMounted(async () => {
   // Check auth
   const token = localStorage.getItem('auth_token')
   if (!token) {
@@ -535,24 +594,8 @@ onMounted(() => {
     settings.value.email = user.value.email
   }
   
-  // Load demo data
-  stats.value = {
-    totalSimulations: 12,
-    totalReports: 8,
-    totalAgents: 2450000,
-    avgTime: 8
-  }
-  
-  recentActivity.value = [
-    { id: 1, type: 'simulation', icon: '🔮', title: 'Simulation completed: Market Analysis Q1', time: '2 hours ago', actionLabel: 'View' },
-    { id: 2, type: 'report', icon: '📄', title: 'Report generated: Product Launch Prediction', time: '1 day ago', actionLabel: 'Download' },
-    { id: 3, type: 'simulation', icon: '🔮', title: 'New simulation started: Competitor Analysis', time: '2 days ago', actionLabel: 'View' }
-  ]
-  
-  simulations.value = [
-    { id: 'sim-1', name: 'Market Analysis Q1', requirement: 'Predict market trends for Q1 2024', agents: 500000, status: 'completed', createdAt: 'Mar 10, 2024', reportId: 'rep-1' },
-    { id: 'sim-2', name: 'Product Launch', requirement: 'Simulate customer response to new product launch', agents: 1000000, status: 'completed', createdAt: 'Mar 8, 2024', reportId: 'rep-2' }
-  ]
+  // Load real data from API
+  await loadProjects()
 })
 </script>
 

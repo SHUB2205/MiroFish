@@ -68,3 +68,14 @@ export function getProject(projectId) {
     method: 'get'
   })
 }
+
+/**
+ * List all projects
+ * @returns {Promise}
+ */
+export function listProjects() {
+  return service({
+    url: '/api/graph/projects',
+    method: 'get'
+  })
+}
